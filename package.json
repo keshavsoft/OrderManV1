@@ -1,0 +1,16 @@
+{
+  "name": "ordermanv1",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "read.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "stream-chain": "^3.4.0",
+    "stream-json": "^1.9.1"
+  }
+}
