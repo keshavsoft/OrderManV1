@@ -22,53 +22,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 async function callServer() {
-    return new Promise((resolve, reject) => {
-
-        const filePath = path.join(process.cwd(), "tallyResponse.json");
-
-        const postData = JSON.stringify({
-            static_variables: [
-                { name: "svExportFormat", value: "jsonex" },
-                { name: "svCurrentCompany", value: "Mani2" }
-            ]
-        });
-
-        const options = {
-            hostname: "127.0.0.1",
-            port: 9000,
-            path: "/",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Content-Length": Buffer.byteLength(postData),
-                "Tallyrequest": "Export",
-                "Type": "collection",
-                "Id": "Ledger"
-            }
-        };
-
-        const req = http.request(options, (res) => {
-            const fileStream = fs.createWriteStream(filePath);
-
-            // DIRECT PIPE — BEST PERFORMANCE
-            res.pipe(fileStream);
-
-            res.on("error", reject);
-            fileStream.on("finish", () => {
-                console.log("Saved successfully!");
-                resolve();
-            });
-            fileStream.on("error", reject);
-        });
-
-        req.on("error", reject);
-
-        req.write(postData);
-        req.end();
-    });
-};
-
-async function callServer1() {
 
     // const filePath = path.join(__dirname, "tallyResponse.json");
     const filePath = path.join(process.cwd(), "tallyResponse.json");
