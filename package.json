@@ -1,21 +1,17 @@
 {
-  "name": "ordermanv1",
+  "name": "GenerateApi",
   "version": "1.0.0",
   "description": "",
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "read.js",
+  "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "s1": "pkg write.js --targets node16-win-x64",
-    "s2": "pkg app.js --targets node16-win-x64 --trace-deprecation",
-    "s3": "pkg app.js"
+    "start": "node --env-file=.env app.js"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@yao-pkg/pkg": "^6.14.1",
-    "pkg": "^5.8.1",
-    "stream-chain": "^3.4.0",
-    "stream-json": "^1.9.1"
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0"
   }
 }

@@ -1,120 +1,30 @@
-const http = require('node:http');
-const fs = require("fs");
-const path = require("path");
+import express from 'express';
+import http from 'http';
+import { router as routerFromV1 } from "./V1/routes.js";
 
-const hostname = '127.0.0.1';
-const port = 3001;
+const app = express();
+const server = http.createServer(app);
 
-const server = http.createServer(async (req, res) => {
-    try {
-        await callServer();
-        // Example of an asynchronous operation using await
-        // Replace 'someAsyncFunctionThatReturnsAPromise()' with your actual async logic
+var port = normalizePort(process.env.PORT || 3000);
 
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('Hello World');
-    } catch (error) {
-        console.error(error);
-        res.statusCode = 500;
-        res.end('Internal Server Error');
-    };
-});
+app.use(express.static('Public'));
+app.use("/V1", routerFromV1);
 
-async function callServer() {
-    return new Promise((resolve, reject) => {
+function normalizePort(val) {
+    var port = parseInt(val, 10);
 
-        const filePath = path.join(process.cwd(), "tallyResponse.json");
-
-        const postData = JSON.stringify({
-            static_variables: [
-                { name: "svExportFormat", value: "jsonex" },
-                { name: "svCurrentCompany", value: "Mani2" }
-            ]
-        });
-
-        const options = {
-            hostname: "127.0.0.1",
-            port: 9000,
-            path: "/",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Content-Length": Buffer.byteLength(postData),
-                "Tallyrequest": "Export",
-                "Type": "collection",
-                "Id": "Ledger"
-            }
-        };
-
-        const req = http.request(options, (res) => {
-            const fileStream = fs.createWriteStream(filePath);
-
-            // DIRECT PIPE — BEST PERFORMANCE
-            res.pipe(fileStream);
-
-            res.on("error", reject);
-            fileStream.on("finish", () => {
-                console.log("Saved successfully!");
-                resolve();
-            });
-            fileStream.on("error", reject);
-        });
-
-        req.on("error", reject);
-
-        req.write(postData);
-        req.end();
-    });
-};
-
-async function callServer1() {
-
-    // const filePath = path.join(__dirname, "tallyResponse.json");
-    const filePath = path.join(process.cwd(), "tallyResponse.json");
-
-    const response = await fetch("http://127.0.0.1:9000", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Tallyrequest": "Export",
-            "Type": "collection",
-            "Id": "Ledger"
-        },
-        body: `{
-    "static_variables": [
-        {
-            "name": "svExportFormat",
-            "value": "jsonex"
-        },
-        {
-            "name": "svCurrentCompany",
-            "value": "Mani2"
-        }
-    ]
-}`
-    });
-
-    if (!response.ok) {
-        // throw new Error("Server responded " + response.status);
+    if (isNaN(port)) {
+        return val;
     }
 
-    // Convert WebStream -> Node stream
-    const nodeStream = require("stream").Readable.fromWeb(response.body);
+    if (port >= 0) {
+        return port;
+    }
 
-    const fileStream = fs.createWriteStream(filePath);
-
-    // PIPE (zero memory usage)
-    await new Promise((resolve, reject) => {
-        nodeStream.pipe(fileStream);
-        nodeStream.on("error", reject);
-        fileStream.on("finish", resolve);
-        fileStream.on("error", reject);
-    });
-
-    console.log("Saved successfully!");
+    return false;
 };
 
 server.listen(port, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+    console.log(`Example app listening on port ${port}`);
+    console.log(`Open here http://localhost:${port}`);
 });
